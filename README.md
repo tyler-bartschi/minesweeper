@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# Minesweeper Serverless
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Lambda Function Notes:
 
-Currently, two official plugins are available:
+Authentication:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- register
+- login
+- change username/pass
+- logout
 
-## React Compiler
+Game State
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- create game
+- get game
+- list user games
+- list user scores
+- update game
+- complete game
 
-## Expanding the ESLint configuration
+Leaderboard
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- get leaderboard
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## DynamoDB Tables
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Users
+---
+user_id (uuid) * partition key
+username (str)
+password (str)
+created_at (date)
+updated_at (date)
+scores (list of scores)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+AuthTokens
+---
+user_id (uuid) * partition key
+authToken (str)
+created_at (str)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Games
+---
+user_id (uuid) * partition key
+game_id (uuid) * sort key
+board (serialized game board)
+started_at (date)
+last_updated (date)
+status (str) - in progress, completed
+difficulty (str) - easy, medium, hard
+
+
+Leaderboard
+---
+username (str)
+score (str) * sort key
+difficulty (str) - easy, medium, hard * partition key
+
+
+Logs
+---
+log_id (uuid) * partition key
+level (str) * sort key
+created_at (date)
+message (str)
