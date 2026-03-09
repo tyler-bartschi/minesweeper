@@ -1,7 +1,10 @@
+type Difficulty = "easy" | "medium" | "hard";
+type Status = "in_progress" | "lost" | "won";
+
 export class Score {
   private _gameId: string;
   private _gameName: string;
-  private _difficulty: "easy" | "medium" | "hard";
+  private _difficulty: Difficulty;
   private _duration: number;
 
   public static compare(a: Score, b: Score): number {
@@ -12,23 +15,13 @@ export class Score {
   public constructor(
     gameId: string,
     gameName: string,
-    difficulty: string,
-    startedAt: Date,
-    endedAt: Date,
+    difficulty: Difficulty,
+    duration: number,
   ) {
-    difficulty = difficulty.toLowerCase().trim();
-    if (!["easy", "medium", "hard"].find((item) => item === difficulty)) {
-      throw new TypeError(
-        `Difficulty must be: "easy", "medium", or "hard" - provided ${difficulty}`,
-      );
-    }
-
     this._gameId = gameId;
     this._gameName = gameName;
-    this._difficulty = difficulty as "easy" | "medium" | "hard";
-    this._duration = Math.floor(
-      (endedAt.getTime() - startedAt.getTime()) / (1000 * 60),
-    );
+    this._difficulty = difficulty;
+    this._duration = duration;
   }
 
   public get gameId(): string {
@@ -39,7 +32,7 @@ export class Score {
     return this._gameName;
   }
 
-  public get difficulty(): string {
+  public get difficulty(): Difficulty {
     return this._difficulty;
   }
 
@@ -60,3 +53,61 @@ export class Score {
     return this._duration;
   }
 }
+
+export class Game {
+  private _gameId: string;
+  private _gameName: string;
+  private _board: GameBoard;
+  private _startedAt: Date;
+  private _status: Status;
+  private _difficulty: Difficulty;
+  private _duration: number;
+
+  public constructor(
+    gameId: string,
+    gameName: string,
+    board: GameBoard,
+    startedAt: Date,
+    status: Status,
+    difficulty: Difficulty,
+    duration: number,
+  ) {
+    this._gameId = gameId;
+    this._gameName = gameName;
+    this._board = board;
+    this._startedAt = startedAt;
+    this._status = status;
+    this._difficulty = difficulty;
+    this._duration = duration;
+  }
+
+  public get gameId(): string {
+    return this._gameId;
+  }
+
+  public get gameName(): string {
+    return this._gameName;
+  }
+
+  public get board(): GameBoard {
+    return this._board;
+  }
+
+  public get startedAt(): Date {
+    return this._startedAt;
+  }
+
+  public get status(): Status {
+    return this._status;
+  }
+
+  public get difficulty(): Difficulty {
+    return this._difficulty;
+  }
+
+  public get duration(): number {
+    return this._duration;
+  }
+}
+
+export class GameBoard {}

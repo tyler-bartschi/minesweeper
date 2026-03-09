@@ -1,5 +1,5 @@
 import { mock } from "@typestrong/ts-mockito";
-import { User } from "../../src/models/User";
+import { Auth, User } from "../../src/models/User";
 import { Score } from "../../src/models/Game";
 
 describe("User Model", () => {
@@ -42,5 +42,24 @@ describe("User Model", () => {
     const retScores = user.scores;
 
     expect(retScores).toEqual(scores);
+  });
+});
+
+describe("Auth Model", () => {
+  let auth: Auth;
+
+  const userId = "user-id";
+  const authToken = "secret-token";
+
+  beforeEach(() => {
+    auth = new Auth(userId, authToken);
+  });
+
+  it("returns the userId", () => {
+    expect(auth.userId).toBe(userId);
+  });
+
+  it("returns the authToken", () => {
+    expect(auth.authToken).toBe(authToken);
   });
 });

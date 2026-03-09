@@ -34,3 +34,21 @@ export class User {
     return this._scores;
   }
 }
+
+export class Auth {
+  private _userId: string;
+  private _authToken: string;
+
+  public constructor(userId: string, authToken: string) {
+    this._userId = userId;
+    this._authToken = authToken;
+  }
+
+  public get userId(): string {
+    return this._userId;
+  }
+
+  public get authToken(): string {
+    return this._authToken;
+  }
+}
