@@ -33,6 +33,8 @@ created_at (date)
 updated_at (date)
 scores (list of scores)
 
+Note: scores are the number of minutes elapsed, lower score is better
+
 
 AuthTokens
 ---
@@ -45,6 +47,7 @@ Games
 ---
 user_id (uuid) * partition key
 game_id (uuid) * sort key
+game_name (str)
 board (serialized game board)
 started_at (date)
 last_updated (date)
