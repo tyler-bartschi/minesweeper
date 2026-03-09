@@ -16,6 +16,7 @@ minesweeper-functions/dist
 minesweeper-shared/dist
 *.local
 .npm
+*.tsbuildinfo
 
 # Editor files
 .vscode
