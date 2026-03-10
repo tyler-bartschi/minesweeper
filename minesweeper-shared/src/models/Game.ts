@@ -162,9 +162,97 @@ export class Tile {
 
 export class GameBoard {
   private _tiles: Tile[][];
+  private _numMines: number;
+  private _minesFound: number;
+  private _minesLeft: number;
 
-  public constructor(tiles: Tile[][]) {
+  public static buildGameBoard(difficulty: Difficulty): GameBoard {
+    let rows: number;
+    let columns: number;
+    let numMines: number;
+
+    // EASY is 10x10 with 10 mines
+    // MEDIUM is 50x50 with 50 mines
+    // HARD is 100x100 with 100 mines
+    switch (difficulty) {
+      case "easy":
+        rows = 10;
+        columns = 10;
+        numMines = 10;
+        break;
+      case "medium":
+        rows = 50;
+        columns = 50;
+        numMines = 50;
+        break;
+      case "hard":
+        rows = 100;
+        columns = 100;
+        numMines = 100;
+        break;
+      default:
+        throw new Error(`Unsupported difficulty: ${difficulty}`);
+    }
+
+    const totalTiles = rows * columns;
+    const mineIndices = new Set<number>();
+    while (mineIndices.size < numMines) {
+      mineIndices.add(Math.floor(Math.random() * totalTiles));
+    }
+
+    const values: number[][] = Array.from({ length: rows }, () =>
+      Array.from({ length: columns }, () => 0),
+    );
+
+    mineIndices.forEach((index) => {
+      const y = Math.floor(index / columns);
+      const x = index % columns;
+      values[y][x] = -1;
+    });
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < columns; x++) {
+        if (values[y][x] === -1) {
+          continue;
+        }
+
+        let adjacentMines = 0;
+
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            if (dx === 0 && dy === 0) {
+              continue;
+            }
+
+            const ny = y + dy;
+            const nx = x + dx;
+
+            if (ny < 0 || ny >= rows || nx < 0 || nx >= columns) {
+              continue;
+            }
+
+            if (values[ny][nx] === -1) {
+              adjacentMines++;
+            }
+          }
+        }
+
+        values[y][x] = adjacentMines;
+      }
+    }
+
+    const tiles: Tile[][] = values.map((row, y) =>
+      row.map((value, x) => new Tile(x, y, value)),
+    );
+
+    return new GameBoard(tiles, numMines, 0, numMines);
+  }
+
+  public constructor(tiles: Tile[][], numMines: number, minesFound: number, minesLeft: number) {
     this._tiles = tiles;
+    this._numMines = numMines;
+    this._minesFound = minesFound;
+    this._minesLeft = minesLeft;
   }
 
   public get tiles(): readonly Tile[][] {
@@ -184,8 +272,34 @@ export class GameBoard {
     return this.getTileInternal(x, y);
   }
 
+  public get numMines(): number {
+    return this._numMines;
+  }
+
+  public get minesFound(): number {
+    return this._minesFound;
+  }
+
+  public get minesLeft(): number {
+    return this._minesLeft;
+  }
+
   public flagTile(x: number, y: number, flag: boolean): void {
-    this.getTileInternal(x, y).setFlagged(flag);
+    const tile = this.getTileInternal(x, y);
+    const wasFlagged = tile.flagged;
+    if (wasFlagged === flag) {
+      return;
+    }
+
+    tile.setFlagged(flag);
+
+    if (flag) {
+      this._minesFound = Math.min(this._numMines, this._minesFound + 1);
+    } else {
+      this._minesFound = Math.max(0, this._minesFound - 1);
+    }
+
+    this._minesLeft = this._numMines - this._minesFound;
   }
 
   public revealTile(x: number, y: number): void {

@@ -114,6 +114,7 @@ describe("GameBoard Model", () => {
   let tile01: Tile;
   let tile10: Tile;
   let tiles2d: Tile[][];
+  const numMines = 2;
 
   beforeEach(() => {
     tile00 = new Tile(0, 0, 1);
@@ -126,23 +127,49 @@ describe("GameBoard Model", () => {
       [tile10, tile11],
     ];
 
-    board = new GameBoard(tiles2d);
+    board = new GameBoard(tiles2d, numMines, 0, numMines);
   });
 
   it("returns tiles via getter and getTile", () => {
     expect(board.tiles[0][0]).toBe(tile00);
     expect(board.getTile(1, 1)).toBe(tiles2d[1][1]);
-    expect(() => board.getTile(5, 5)).toThrow(/Tile not found/);
+    expect(() => board.getTile(5, 5)).toThrow(/Tile not found/i);
   });
 
-  it("sets and clears the flagged state", () => {
+  it("exposes mine statistics through getters", () => {
+    expect(board.numMines).toBe(numMines);
+    expect(board.minesFound).toBe(0);
+    expect(board.minesLeft).toBe(numMines);
+  });
+
+  it("sets and clears the flagged state while updating counters", () => {
     expect(tile01.flagged).toBe(false);
+    expect(board.minesFound).toBe(0);
+    expect(board.minesLeft).toBe(numMines);
 
     board.flagTile(1, 0, true);
     expect(tile01.flagged).toBe(true);
+    expect(board.minesFound).toBe(1);
+    expect(board.minesLeft).toBe(numMines - 1);
 
     board.flagTile(1, 0, false);
     expect(tile01.flagged).toBe(false);
+    expect(board.minesFound).toBe(0);
+    expect(board.minesLeft).toBe(numMines);
+  });
+
+  it("ignores redundant flag requests", () => {
+    board.flagTile(0, 0, true);
+    expect(board.minesFound).toBe(1);
+
+    board.flagTile(0, 0, true);
+    expect(board.minesFound).toBe(1);
+
+    board.flagTile(0, 0, false);
+    expect(board.minesFound).toBe(0);
+
+    board.flagTile(0, 0, false);
+    expect(board.minesFound).toBe(0);
   });
 
   it("reveals a tile", () => {
@@ -153,15 +180,80 @@ describe("GameBoard Model", () => {
   });
 
   it("throws when modifying non-existent tiles", () => {
-    expect(() => board.flagTile(15, 0, true)).toThrow(/Tile not found/);
-    expect(() => board.revealTile(0, 99)).toThrow(/Tile not found/);
+    expect(() => board.flagTile(15, 0, true)).toThrow(/Tile not found/i);
+    expect(() => board.revealTile(0, 99)).toThrow(/Tile not found/i);
+  });
+});
+
+describe("GameBoard.buildGameBoard", () => {
+  const difficultyConfig: Record<
+    Difficulty,
+    { rows: number; columns: number; mines: number }
+  > = {
+    easy: { rows: 10, columns: 10, mines: 10 },
+    medium: { rows: 50, columns: 50, mines: 50 },
+    hard: { rows: 100, columns: 100, mines: 100 },
+  };
+
+  const difficultyEntries = Object.entries(difficultyConfig) as [
+    Difficulty,
+    { rows: number; columns: number; mines: number },
+  ][];
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe.each(difficultyEntries)(
+    "%s difficulty",
+    (difficulty, { rows, columns, mines }) => {
+      let board: GameBoard;
+
+      beforeEach(() => {
+        board = GameBoard.buildGameBoard(difficulty);
+      });
+
+      it("creates the expected number of mines", () => {
+        const mineCount = board.tiles.reduce(
+          (total, row) =>
+            total + row.filter((tile) => tile.value === -1).length,
+          0,
+        );
+
+        expect(mineCount).toBe(mines);
+      });
+
+      it("produces boards with the correct dimensions", () => {
+        expect(board.tiles.length).toBe(rows);
+        expect(board.tiles[0].length).toBe(columns);
+      });
+    },
+  );
+
+  it("assigns adjacency values once mines are placed", () => {
+    const randomValues = Array.from({ length: 10 }, (_, index) => {
+      return (index + 0.5) / 100;
+    });
+    let index = 0;
+    jest.spyOn(Math, "random").mockImplementation(() => {
+      const value = randomValues[index] ?? 0;
+      index += 1;
+      return value;
+    });
+
+    const board = GameBoard.buildGameBoard("easy");
+    const firstRow = board.tiles[0];
+    const secondRowValues = board.tiles[1].map((tile) => tile.value);
+
+    expect(firstRow.every((tile) => tile.value === -1)).toBe(true);
+    expect(secondRowValues).toEqual([2, 3, 3, 3, 3, 3, 3, 3, 3, 2]);
   });
 });
 
 describe("Game Model", () => {
   const gameId = "game-id";
   const gameName = "boarded game";
-  const board = new GameBoard([[new Tile(0, 0, 0)]]);
+  const board = new GameBoard([[new Tile(0, 0, 0)]], 0, 0, 0);
   const startedAt = new Date("2026-01-01T08:00:00Z");
   const status: Status = "in_progress";
   const difficulty: Difficulty = "medium";
