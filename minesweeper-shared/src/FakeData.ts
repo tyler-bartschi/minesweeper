@@ -25,10 +25,10 @@ const USERNAMES = [
 ];
 
 interface ScoreProps {
-  gameId: string;
-  gameName: string;
-  difficulty: Difficulty;
-  duration: number;
+  gameId?: string;
+  gameName?: string;
+  difficulty?: Difficulty;
+  duration?: number;
 };
 
 interface GameProps {
@@ -125,7 +125,7 @@ export class FakeData {
     return GameBoard.buildGameBoard(difficulty);
   }
 
-  public createScore(overrides: Partial<ScoreProps> = {}): Score {
+  public createScore(overrides: ScoreProps = {}): Score {
     const difficulty = overrides.difficulty ?? this.randomChoice(DIFFICULTIES);
     const duration = overrides.duration ?? this.randomDuration(difficulty);
     const gameId = overrides.gameId ?? this.nextId("game");
@@ -134,7 +134,7 @@ export class FakeData {
     return new Score(gameId, gameName, difficulty, duration);
   }
 
-  public createGame(overrides: Partial<GameProps> = {}): Game {
+  public createGame(overrides: GameProps = {}): Game {
     const difficulty = overrides.difficulty ?? this.randomChoice(DIFFICULTIES);
     const status = overrides.status ?? this.randomChoice(STATUSES);
     const board = overrides.board ?? this.createGameBoard(difficulty);
@@ -146,7 +146,7 @@ export class FakeData {
     return new Game(gameId, gameName, board, startedAt, status, difficulty, duration);
   }
 
-  public createUser(overrides: Partial<UserProps> = {}): User {
+  public createUser(overrides: UserProps = {}): User {
     const userId = overrides.userId ?? this.nextId("user");
     const username = overrides.username ?? this.randomUsername();
     const password = overrides.password ?? `pass-${userId}`;
@@ -170,20 +170,35 @@ export class FakeData {
     );
   }
 
-  public getGames(count = 3, overrides: Partial<GameProps> = {}): Game[] {
+  public getGames(count = 3, overrides: GameProps = {}): Game[] {
     return Array.from({ length: count }, () =>
       this.createGame(overrides),
     );
   }
 
-  public getUsers(count = 2, overrides: Partial<UserProps> = {}): User[] {
+  public getGame(overrides: GameProps = {}): Game {
+    const [ game ] = this.getGames(1, overrides);
+    return game;
+  }
+
+  public getUsers(count = 2, overrides: UserProps = {}): User[] {
     return Array.from({ length: count }, () =>
       this.createUser(overrides),
     );
   }
 
+  public getUser(overrides: UserProps = {}): User {
+    const [ user ] = this.getUsers(1, overrides);
+    return user;
+  }
+
   public getScores(count = 5, difficulty?: Difficulty): Score[] {
     return this.getHighScores(count, difficulty);
+  }
+
+  public getScore(difficulty?: Difficulty): Score {
+    const [ score ] = this.getScores(1, difficulty);
+    return score;
   }
 
   public getGameBoards(count = 2, difficulty?: Difficulty): GameBoard[] {
@@ -192,6 +207,10 @@ export class FakeData {
     );
   }
 
+  public getGameBoard(difficulty?: Difficulty): GameBoard{
+    const [ gameBoard ] = this.getGameBoards(1, difficulty);
+    return gameBoard;
+ }
   public getTiles(count = 5): Tile[] {
     return Array.from({ length: count }, () => this.createTile());
   }
