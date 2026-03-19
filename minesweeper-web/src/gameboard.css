@@ -1,0 +1,66 @@
+.game-board {
+  display: grid;
+  gap: 4px;
+  background: #333333;
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.5);
+}
+
+.tile {
+  width: 34px;
+  height: 34px;
+  background: #5c5c5c;
+  border: 1px solid #6f6f6f;
+  border-radius: 8px;
+  color: #f8f8f8;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tile:not(.revealed):hover {
+  background: #6a6a6a;
+  transform: translateY(-1px);
+}
+
+.tile:focus-visible {
+  outline: 2px solid #7dd3ff;
+  outline-offset: 2px;
+}
+
+.tile.revealed {
+  background: #e5e5e5;
+  border-color: #c6c6c6;
+  color: #1f1f1f;
+  box-shadow: inset 0 0 0 1px #c0c0c0;
+  cursor: default;
+}
+
+.tile.revealed:hover {
+  background: #e5e5e5;
+  transform: none;
+}
+
+.tile.flagged {
+  cursor: default;
+}
+
+.flag-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #ef5350;
+  box-shadow: 0 0 6px rgba(239, 83, 80, 0.6);
+  position: absolute;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["esnext", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "jest"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -22,6 +22,11 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
+    ,
+    "baseUrl": ".",
+    "paths": {
+      "shared/*": ["../minesweeper-shared/src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../minesweeper-shared/src"]
 }
