@@ -1,16 +1,20 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type {
+  UpdateCredentialsRequest,
+  UpdateCredentialsResponse,
+} from 'minesweeper-shared';
 import { AccountService } from '../../service/AccountService';
 
 const accountService = new AccountService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return accountService.updateCredentials(event, context.awsRequestId);
+export const handler: Handler<UpdateCredentialsRequest, UpdateCredentialsResponse> = async (
+  request: UpdateCredentialsRequest,
+): Promise<UpdateCredentialsResponse> => {
+  return accountService.updateCredentials(
+    request.authToken,
+    request.currentPassword,
+    request.newUsername,
+    request.newPassword,
+    request.requestId,
+  );
 };

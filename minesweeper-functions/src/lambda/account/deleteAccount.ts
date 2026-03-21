@@ -1,16 +1,16 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type { DeleteAccountRequest, DeleteAccountResponse } from 'minesweeper-shared';
 import { AccountService } from '../../service/AccountService';
 
 const accountService = new AccountService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return accountService.deleteAccount(event, context.awsRequestId);
+export const handler: Handler<DeleteAccountRequest, DeleteAccountResponse> = async (
+  request: DeleteAccountRequest,
+): Promise<DeleteAccountResponse> => {
+  return accountService.deleteAccount(
+    request.authToken,
+    request.password,
+    request.deleteGames,
+    request.requestId,
+  );
 };

@@ -1,16 +1,11 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type { GetGameRequest, GetGameResponse } from 'minesweeper-shared';
 import { GameService } from '../../service/GameService';
 
 const gameService = new GameService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return gameService.getGame(event, context.awsRequestId);
+export const handler: Handler<GetGameRequest, GetGameResponse> = async (
+  request: GetGameRequest,
+): Promise<GetGameResponse> => {
+  return gameService.getGame(request.authToken, request.gameId, request.requestId);
 };

@@ -1,24 +1,37 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import type {
+  DeleteAccountResponse,
+  UpdateCredentialsResponse,
+} from 'minesweeper-shared';
 import { AccountDao } from '../dao/AccountDao';
 
 export class AccountService {
   constructor(private readonly accountDao: AccountDao = new AccountDao()) {}
 
   async updateCredentials(
-    event: APIGatewayProxyEvent,
+    authToken: string,
+    currentPassword: string,
+    newUsername: string | undefined,
+    newPassword: string | undefined,
     requestId: string,
-  ): Promise<APIGatewayProxyResult> {
-    void event;
+  ): Promise<UpdateCredentialsResponse> {
+    void authToken;
+    void currentPassword;
+    void newUsername;
+    void newPassword;
     void requestId;
     void this.accountDao;
     throw new Error('Not implemented');
   }
 
   async deleteAccount(
-    event: APIGatewayProxyEvent,
+    authToken: string,
+    password: string,
+    deleteGames: boolean,
     requestId: string,
-  ): Promise<APIGatewayProxyResult> {
-    void event;
+  ): Promise<DeleteAccountResponse> {
+    void authToken;
+    void password;
+    void deleteGames;
     void requestId;
     void this.accountDao;
     throw new Error('Not implemented');

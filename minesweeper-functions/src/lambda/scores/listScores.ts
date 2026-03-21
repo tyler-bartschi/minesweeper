@@ -1,16 +1,17 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type { ListScoresRequest, ListScoresResponse } from 'minesweeper-shared';
 import { ScoreService } from '../../service/ScoreService';
 
 const scoreService = new ScoreService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return scoreService.listScores(event, context.awsRequestId);
+export const handler: Handler<ListScoresRequest, ListScoresResponse> = async (
+  request: ListScoresRequest,
+): Promise<ListScoresResponse> => {
+  return scoreService.listScores(
+    request.authToken,
+    request.difficulty,
+    request.limit,
+    request.cursor,
+    request.requestId,
+  );
 };

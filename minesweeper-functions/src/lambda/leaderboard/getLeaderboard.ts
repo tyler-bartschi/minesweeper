@@ -1,16 +1,15 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type { GetLeaderboardRequest, GetLeaderboardResponse } from 'minesweeper-shared';
 import { LeaderboardService } from '../../service/LeaderboardService';
 
 const leaderboardService = new LeaderboardService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return leaderboardService.getLeaderboard(event, context.awsRequestId);
+export const handler: Handler<GetLeaderboardRequest, GetLeaderboardResponse> = async (
+  request: GetLeaderboardRequest,
+): Promise<GetLeaderboardResponse> => {
+  return leaderboardService.getLeaderboard(
+    request.difficulty,
+    request.limit,
+    request.requestId,
+  );
 };

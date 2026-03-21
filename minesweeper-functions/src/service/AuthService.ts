@@ -1,34 +1,35 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import type { LoginResponse, LogoutResponse, RegisterResponse } from 'minesweeper-shared';
 import { AuthDao } from '../dao/AuthDao';
 
 export class AuthService {
   constructor(private readonly authDao: AuthDao = new AuthDao()) {}
 
   async register(
-    event: APIGatewayProxyEvent,
+    username: string,
+    password: string,
     requestId: string,
-  ): Promise<APIGatewayProxyResult> {
-    void event;
+  ): Promise<RegisterResponse> {
+    void username;
+    void password;
     void requestId;
     void this.authDao;
     throw new Error('Not implemented');
   }
 
   async login(
-    event: APIGatewayProxyEvent,
+    username: string,
+    password: string,
     requestId: string,
-  ): Promise<APIGatewayProxyResult> {
-    void event;
+  ): Promise<LoginResponse> {
+    void username;
+    void password;
     void requestId;
     void this.authDao;
     throw new Error('Not implemented');
   }
 
-  async logout(
-    event: APIGatewayProxyEvent,
-    requestId: string,
-  ): Promise<APIGatewayProxyResult> {
-    void event;
+  async logout(authToken: string, requestId: string): Promise<LogoutResponse> {
+    void authToken;
     void requestId;
     void this.authDao;
     throw new Error('Not implemented');

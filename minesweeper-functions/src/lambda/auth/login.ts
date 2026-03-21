@@ -1,16 +1,11 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type { LoginRequest, LoginResponse } from 'minesweeper-shared';
 import { AuthService } from '../../service/AuthService';
 
 const authService = new AuthService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return authService.login(event, context.awsRequestId);
+export const handler: Handler<LoginRequest, LoginResponse> = async (
+  request: LoginRequest,
+): Promise<LoginResponse> => {
+  return authService.login(request.username, request.password, request.requestId);
 };

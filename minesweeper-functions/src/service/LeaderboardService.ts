@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import type { Difficulty, GetLeaderboardResponse } from 'minesweeper-shared';
 import { LeaderboardDao } from '../dao/LeaderboardDao';
 
 export class LeaderboardService {
@@ -7,10 +7,12 @@ export class LeaderboardService {
   ) {}
 
   async getLeaderboard(
-    event: APIGatewayProxyEvent,
+    difficulty: Difficulty | undefined,
+    limit: number | undefined,
     requestId: string,
-  ): Promise<APIGatewayProxyResult> {
-    void event;
+  ): Promise<GetLeaderboardResponse> {
+    void difficulty;
+    void limit;
     void requestId;
     void this.leaderboardDao;
     throw new Error('Not implemented');

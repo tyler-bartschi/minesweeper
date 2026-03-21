@@ -1,16 +1,11 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type { DeleteGameRequest, DeleteGameResponse } from 'minesweeper-shared';
 import { GameService } from '../../service/GameService';
 
 const gameService = new GameService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return gameService.deleteGame(event, context.awsRequestId);
+export const handler: Handler<DeleteGameRequest, DeleteGameResponse> = async (
+  request: DeleteGameRequest,
+): Promise<DeleteGameResponse> => {
+  return gameService.deleteGame(request.authToken, request.gameId, request.requestId);
 };

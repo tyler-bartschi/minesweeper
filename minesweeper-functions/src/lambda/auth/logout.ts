@@ -1,16 +1,11 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-  Handler,
-} from 'aws-lambda';
+import { Handler } from 'aws-lambda';
+import type { LogoutRequest, LogoutResponse } from 'minesweeper-shared';
 import { AuthService } from '../../service/AuthService';
 
 const authService = new AuthService();
 
-export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
-  event: APIGatewayProxyEvent,
-  context: Context,
-): Promise<APIGatewayProxyResult> => {
-  return authService.logout(event, context.awsRequestId);
+export const handler: Handler<LogoutRequest, LogoutResponse> = async (
+  request: LogoutRequest,
+): Promise<LogoutResponse> => {
+  return authService.logout(request.authToken, request.requestId);
 };

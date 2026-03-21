@@ -1,3 +1,42 @@
 export { Difficulty, Status, Score, Game, Tile, GameBoard } from "./models/Game"
 export { User, Auth } from "./models/User"
-
+export type {
+  MinesweeperRequest,
+  RegisterRequest,
+  LoginRequest,
+  LogoutRequest,
+  UpdateCredentialsRequest,
+  DeleteAccountRequest,
+  CreateGameRequest,
+  ListGamesRequest,
+  GetGameRequest,
+  ResumeGameRequest,
+  UpdateGameTileRequest,
+  UpdateGameBoardRequest,
+  UpdateGameRequest,
+  DeleteGameRequest,
+  ListScoresRequest,
+  GetLeaderboardRequest,
+} from "./net/request"
+export type {
+  MinesweeperResponse,
+  ResponseUser,
+  ResponseAuth,
+  ResponseTile,
+  ResponseBoard,
+  ResponseGame,
+  ResponseGameWithBoard,
+  RegisterResponse,
+  LoginResponse,
+  LogoutResponse,
+  UpdateCredentialsResponse,
+  DeleteAccountResponse,
+  CreateGameResponse,
+  ListGamesResponse,
+  GetGameResponse,
+  ResumeGameResponse,
+  UpdateGameResponse,
+  DeleteGameResponse,
+  ListScoresResponse,
+  GetLeaderboardResponse,
+} from "./net/response"
